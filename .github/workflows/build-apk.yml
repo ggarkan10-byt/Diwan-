@@ -1,0 +1,30 @@
+name: Build Diwan APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-apk.yml'
+      - 'diwan_flutter/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Create Flutter project
+        run: flutter create diwan_flutter
+
+      - name: Build APK
+        working-directory: diwan_flutter
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: diwan-android-apk
+          path: diwan_flutter/build/app/outputs/flutter-apk/app-release.apk
